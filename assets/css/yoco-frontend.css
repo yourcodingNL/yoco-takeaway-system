@@ -1,0 +1,1034 @@
+/**
+ * YoCo Takeaway System - Frontend Styles
+ * 
+ * @package YoCo_Takeaway_System
+ * @since 1.0.0
+ */
+
+/* ==========================================================================
+   Base Menu Container
+   ========================================================================== */
+
+.yoco-menu {
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Quick Navigation
+   ========================================================================== */
+
+.yoco-quick-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.yoco-quick-nav-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    white-space: nowrap;
+}
+
+.yoco-quick-nav-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.yoco-quick-nav-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.yoco-quick-nav-btn:hover {
+    background: #229954;
+}
+
+/* ==========================================================================
+   Updated Filter Toggle (removed emoji)
+   ========================================================================== */
+
+.yoco-filters-toggle-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+}
+
+/* ==========================================================================
+   Hidden Elements
+   ========================================================================== */
+
+.yoco-item.hidden,
+.yoco-category-section.hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Search Section
+   ========================================================================== */
+
+.yoco-search-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 0;
+}
+
+.yoco-search-wrapper .yoco-search-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    border-right: none;
+    background: #fff;
+    margin-bottom: 0;
+}
+
+.yoco-search-wrapper .yoco-search-input:focus {
+    outline: none;
+    border-color: #27ae60;
+}
+
+.yoco-search-wrapper .yoco-search-input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.yoco-search-wrapper .yoco-search-btn {
+    background: #27ae60;
+    color: white;
+    border: 1px solid #27ae60;
+    border-left: none;
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.yoco-search-wrapper .yoco-search-btn:hover {
+    background: #229954;
+    border-color: #229954;
+}
+
+/* ==========================================================================
+   Filter Section
+   ========================================================================== */
+
+.yoco-filters-toggle {
+    background: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.yoco-filters-toggle:hover {
+    background: #f9f9f9;
+    border-color: #27ae60;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.yoco-filters-toggle-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+}
+
+.yoco-filters-toggle-icon {
+    font-size: 16px;
+    color: #27ae60;
+    transition: transform 0.3s ease;
+    margin-left: 8px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.yoco-filters-toggle.active .yoco-filters-toggle-icon {
+    transform: rotate(45deg);
+}
+
+.yoco-filters {
+    background: #fff;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s ease;
+    margin-bottom: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.yoco-filters.active {
+    max-height: 600px;
+    padding: 25px;
+    margin-bottom: 30px;
+    opacity: 1;
+}
+
+.yoco-filters h3 {
+    color: #333;
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.yoco-filter-section {
+    margin-bottom: 20px;
+}
+
+.yoco-filter-section:last-of-type {
+    margin-bottom: 15px;
+}
+
+.yoco-filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.yoco-filter-btn {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.yoco-filter-btn:hover {
+    background: #ebebeb;
+    border-color: #ccc;
+    color: #333;
+    transform: translateY(-1px);
+}
+
+.yoco-filter-btn.active {
+    background: #27ae60;
+    color: white;
+    border-color: #27ae60;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.3);
+}
+
+.yoco-filter-reset {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.yoco-filter-reset:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+/* ==========================================================================
+   Category Sections
+   ========================================================================== */
+
+.yoco-category-section {
+    margin-bottom: 50px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 30px;
+}
+
+.yoco-category-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.yoco-category-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #27ae60;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.yoco-category-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #e74c3c;
+}
+
+.yoco-category-description {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.yoco-category-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Update existing item styling for category layout */
+.yoco-category-items .yoco-item {
+    margin-bottom: 0;
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+}
+
+.yoco-category-items .yoco-item:last-child {
+    border-bottom: none;
+}
+
+.yoco-category-items .yoco-item:hover {
+    background: #f8f9fa;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 8px;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+/* ==========================================================================
+   Category Navigation (Optional)
+   ========================================================================== */
+
+.yoco-category-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.yoco-category-nav-item {
+    padding: 8px 16px;
+    background: #f5f5f5;
+    color: #666;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid #ddd;
+}
+
+.yoco-category-nav-item:hover {
+    background: #27ae60;
+    color: white;
+    border-color: #27ae60;
+    text-decoration: none;
+}
+
+.yoco-category-nav-item.active {
+    background: #27ae60;
+    color: white;
+    border-color: #27ae60;
+}
+
+/* ==========================================================================
+   Responsive Category Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .yoco-category-title {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+    
+    .yoco-category-section {
+        margin-bottom: 35px;
+        padding-bottom: 20px;
+    }
+    
+    .yoco-category-description {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .yoco-category-nav {
+        padding: 15px 0;
+    }
+    
+    .yoco-category-nav-item {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .yoco-category-title {
+        font-size: 20px;
+        letter-spacing: 0.5px;
+    }
+    
+    .yoco-category-nav {
+        gap: 8px;
+    }
+}
+
+.yoco-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.yoco-item:hover {
+    background: #f8f9fa;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-bottom-color: #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.yoco-item.hidden {
+    display: none;
+}
+
+.yoco-item:last-child {
+    border-bottom: none;
+}
+
+.yoco-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.yoco-item:hover .yoco-image {
+    transform: scale(1.05);
+}
+
+.yoco-info {
+    flex: 1;
+}
+
+.yoco-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #333;
+    line-height: 1.3;
+}
+
+.yoco-description {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.yoco-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.yoco-icon-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    border: 1px solid #e8e8e8;
+    transition: all 0.2s ease;
+}
+
+.yoco-icon-item:hover {
+    background: #ebebeb;
+    border-color: #ddd;
+}
+
+.yoco-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.yoco-emoji-icon {
+    font-size: 16px;
+}
+
+/* ==========================================================================
+   Price and Order Section
+   ========================================================================== */
+
+.yoco-price-order {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.yoco-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e74c3c;
+    white-space: nowrap;
+}
+
+.yoco-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 5px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.yoco-qty-btn {
+    background: #f0f0f0;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.yoco-qty-btn:hover {
+    background: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.yoco-qty-btn:active {
+    transform: scale(0.95);
+}
+
+.yoco-qty-input {
+    width: 40px;
+    text-align: center;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+}
+
+.yoco-order-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
+}
+
+.yoco-order-btn:hover {
+    background: #229954;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+}
+
+.yoco-order-btn:active {
+    transform: translateY(0);
+}
+
+.yoco-order-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ==========================================================================
+   Allergen Button
+   ========================================================================== */
+
+.yoco-allergens-btn {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(243, 156, 18, 0.2);
+}
+
+.yoco-allergens-btn:hover {
+    background: #e67e22;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(243, 156, 18, 0.3);
+}
+
+/* ==========================================================================
+   Notifications
+   ========================================================================== */
+
+.yoco-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 300px;
+    animation: yoco-slideIn 0.3s ease-out;
+    border-top: 4px solid;
+}
+
+.yoco-notification.success {
+    border-top-color: #27ae60;
+}
+
+.yoco-notification.error {
+    border-top-color: #e74c3c;
+}
+
+.yoco-notification-icon {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.yoco-notification.success .yoco-notification-icon {
+    color: #27ae60;
+}
+
+.yoco-notification.error .yoco-notification-icon {
+    color: #e74c3c;
+}
+
+.yoco-notification-content {
+    flex: 1;
+}
+
+.yoco-notification-title {
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.yoco-notification-message {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.yoco-notification-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.yoco-notification-close:hover {
+    color: #333;
+}
+
+.yoco-notification.hiding {
+    animation: yoco-slideOut 0.3s ease-out forwards;
+}
+
+/* ==========================================================================
+   Allergen Popup
+   ========================================================================== */
+
+.yoco-allergen-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: yoco-fadeIn 0.2s ease-out;
+    backdrop-filter: blur(2px);
+}
+
+.yoco-allergen-popup {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: yoco-popupSlideIn 0.3s ease-out;
+}
+
+.yoco-allergen-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f39c12;
+}
+
+.yoco-allergen-popup-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.yoco-allergen-popup-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    border-radius: 50%;
+}
+
+.yoco-allergen-popup-close:hover {
+    color: #333;
+    background: #f5f5f5;
+}
+
+.yoco-allergen-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.yoco-allergen-item {
+    padding: 12px;
+    background: #fff3cd;
+    border-left: 4px solid #f39c12;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 15px;
+    color: #333;
+    position: relative;
+}
+
+.yoco-allergen-item:before {
+    content: "⚠️ ";
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.yoco-allergen-popup-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes yoco-slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes yoco-slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+@keyframes yoco-fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes yoco-popupSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Remove the ugly pulse animation */
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .yoco-search-wrapper {
+        flex-direction: column;
+    }
+    
+    .yoco-search-input {
+        border-radius: 8px;
+        border-right: 2px solid #ddd;
+        border-bottom: none;
+    }
+    
+    .yoco-search-btn {
+        border-radius: 8px;
+        border-left: 2px solid #27ae60;
+        border-top: none;
+        padding: 12px 20px;
+    }
+    
+    .yoco-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .yoco-image {
+        width: 100%;
+        height: 200px;
+        align-self: center;
+        max-width: 300px;
+    }
+    
+    .yoco-price-order {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+    
+    .yoco-title {
+        font-size: 20px;
+    }
+    
+    .yoco-price {
+        font-size: 18px;
+    }
+    
+    .yoco-filter-buttons {
+        gap: 6px;
+    }
+    
+    .yoco-filter-btn {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    
+    .yoco-allergen-popup {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .yoco-allergen-popup-title {
+        font-size: 18px;
+    }
+    
+    .yoco-notification {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .yoco-menu {
+        padding: 0 10px;
+    }
+    
+    .yoco-price-order {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .yoco-quantity {
+        justify-content: center;
+    }
+    
+    .yoco-icons {
+        gap: 6px;
+    }
+    
+    .yoco-icon-item {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .yoco-menu {
+        color: #e0e0e0;
+    }
+    
+    .yoco-search-input,
+    .yoco-filters,
+    .yoco-filters-toggle,
+    .yoco-quantity,
+    .yoco-allergen-popup,
+    .yoco-notification {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e0e0e0;
+    }
+    
+    .yoco-item:hover {
+        background: #374151;
+    }
+    
+    .yoco-icon-item {
+        background: #374151;
+        border-color: #4a5568;
+        color: #cbd5e0;
+    }
+    
+    .yoco-filter-btn {
+        background: #374151;
+        border-color: #4a5568;
+        color: #cbd5e0;
+    }
+    
+    .yoco-qty-btn {
+        background: #374151;
+        color: #e0e0e0;
+    }
+    
+    .yoco-qty-btn:hover {
+        background: #4a5568;
+    }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .yoco-search-wrapper,
+    .yoco-filters-toggle,
+    .yoco-filters,
+    .yoco-quantity,
+    .yoco-order-btn,
+    .yoco-allergens-btn {
+        display: none !important;
+    }
+    
+    .yoco-item {
+        break-inside: avoid;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    .yoco-price {
+        color: #000 !important;
+    }
+}

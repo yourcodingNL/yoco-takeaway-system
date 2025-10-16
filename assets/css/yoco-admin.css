@@ -1,0 +1,338 @@
+/**
+ * YoCo Takeaway System - Admin Styles
+ * 
+ * @package YoCo_Takeaway_System
+ * @since 1.0.0
+ */
+
+/* ==========================================================================
+   Meta Box Styles
+   ========================================================================== */
+
+.yoco-food-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.yoco-food-detail-field {
+    margin-bottom: 15px;
+}
+
+.yoco-food-detail-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.yoco-food-detail-field input[type="number"],
+.yoco-food-detail-field input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.yoco-food-detail-field input[type="number"]:focus,
+.yoco-food-detail-field input[type="text"]:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+}
+
+/* Checkbox Groups */
+.yoco-food-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.yoco-food-checkbox-group:hover {
+    background: #f5f5f5;
+}
+
+.yoco-food-checkbox-group input[type="checkbox"] {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.yoco-food-checkbox-group label {
+    margin: 0 !important;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+}
+
+/* Icon Preview */
+.yoco-food-icon-preview {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    border-radius: 2px;
+}
+
+/* Spicy Rating */
+.yoco-spicy-rating {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e5e5e5;
+}
+
+.yoco-spicy-rating label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.yoco-spicy-rating label:hover {
+    background: #f0f0f0;
+}
+
+.yoco-spicy-rating input[type="radio"] {
+    margin: 0 8px 0 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* Allergen Grid */
+.yoco-allergen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   Settings Page Styles
+   ========================================================================== */
+
+.yoco-settings-section {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.yoco-settings-section h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.yoco-icon-upload-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.yoco-icon-upload-field input[type="text"] {
+    flex: 1;
+}
+
+.yoco-upload-icon-button {
+    flex-shrink: 0;
+}
+
+.yoco-icon-preview {
+    max-width: 50px;
+    max-height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background: #f9f9f9;
+}
+
+/* Settings Form Table Improvements */
+.form-table th {
+    width: 200px;
+    font-weight: 600;
+}
+
+.form-table .description {
+    color: #666;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Admin Columns
+   ========================================================================== */
+
+.column-yoco_price {
+    width: 100px;
+}
+
+.column-yoco_attributes {
+    width: 150px;
+}
+
+.yoco-attribute-icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.yoco-attribute-icons img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 782px) {
+    .yoco-food-details-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .yoco-spicy-rating {
+        gap: 8px;
+    }
+    
+    .yoco-allergen-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .yoco-icon-upload-field {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* ==========================================================================
+   WordPress Admin Compatibility
+   ========================================================================== */
+
+/* Ensure proper spacing in meta boxes */
+#yoco_food_details .inside {
+    margin: 0;
+    padding: 12px;
+}
+
+/* Better integration with WordPress admin color schemes */
+.admin-color-blue .yoco-food-checkbox-group input[type="checkbox"]:checked,
+.admin-color-coffee .yoco-food-checkbox-group input[type="checkbox"]:checked,
+.admin-color-ectoplasm .yoco-food-checkbox-group input[type="checkbox"]:checked,
+.admin-color-midnight .yoco-food-checkbox-group input[type="checkbox"]:checked,
+.admin-color-ocean .yoco-food-checkbox-group input[type="checkbox"]:checked,
+.admin-color-sunrise .yoco-food-checkbox-group input[type="checkbox"]:checked {
+    accent-color: var(--wp-admin-theme-color, #0073aa);
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+.yoco-food-checkbox-group:focus-within {
+    outline: 2px solid #005177;
+    outline-offset: 2px;
+}
+
+.yoco-spicy-rating label:focus-within {
+    outline: 2px solid #005177;
+    outline-offset: 1px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .yoco-food-checkbox-group {
+        border-width: 2px;
+    }
+    
+    .yoco-spicy-rating {
+        border-width: 2px;
+    }
+    
+    .yoco-food-detail-field input:focus {
+        outline-width: 3px;
+    }
+}
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+
+.yoco-loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.yoco-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #0073aa;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: yoco-spin 1s linear infinite;
+}
+
+@keyframes yoco-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Error States
+   ========================================================================== */
+
+.yoco-field-error {
+    border-color: #dc3232 !important;
+    box-shadow: 0 0 0 1px #dc3232 !important;
+}
+
+.yoco-error-message {
+    color: #dc3232;
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* ==========================================================================
+   Success States
+   ========================================================================== */
+
+.yoco-field-success {
+    border-color: #46b450 !important;
+    box-shadow: 0 0 0 1px #46b450 !important;
+}
+
+.yoco-success-message {
+    color: #46b450;
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+}
