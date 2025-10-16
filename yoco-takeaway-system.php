@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: YoCo - Takeaway System
- * Plugin URI: https://www.yourcoding.nl/yoco-takeaway-system
+ * Plugin URI: https://github.com/yourcodingNL/yoco-takeaway-system
  * Description: Complete takeaway ordering system with food products, menu display, and WooCommerce integration.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Your Coding - Sebastiaan Kalkman
  * Author URI: https://www.yourcoding.nl
  * Email: info@yourcoding.nl
@@ -310,3 +310,92 @@ function YoCo() {
 
 // Initialize plugin
 YoCo();
+/**
+ * --- GitHub Updater: YoCo Takeaway System ---
+ * Werkt met PUBLIC repo releases (tags als v1.0.1)
+ */
+if ( ! class_exists( 'YoCo_GitHub_Updater' ) ) {
+    class YoCo_GitHub_Updater {
+        private $plugin_file;
+        private $github_user = 'yourcodingNL';
+        private $github_repo = 'yoco-takeaway-system';
+
+        public function __construct( $plugin_file ) {
+            $this->plugin_file = $plugin_file;
+
+            // Check op updates
+            add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ] );
+            // Modal met plugin-info
+            add_filter( 'plugins_api', [ $this, 'plugin_info' ], 10, 3 );
+        }
+
+        private function get_latest_release() {
+            $url  = "https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest";
+            $args = [
+                'headers' => [
+                    // GitHub wil een User-Agent header zien
+                    'User-Agent' => 'WordPress/' . get_bloginfo('version'),
+                ],
+                'timeout' => 15,
+            ];
+            $response = wp_remote_get( $url, $args );
+            if ( is_wp_error( $response ) ) return false;
+
+            $body = json_decode( wp_remote_retrieve_body( $response ) );
+            if ( ! $body || empty( $body->tag_name ) ) return false;
+
+            // Normaliseer: 'v1.2.3' -> '1.2.3'
+            $body->normalized_version = ltrim( $body->tag_name, 'v' );
+            return $body;
+        }
+
+        public function check_update( $transient ) {
+            if ( empty( $transient->checked ) ) return $transient;
+
+            $release = $this->get_latest_release();
+            if ( ! $release ) return $transient;
+
+            $slug            = plugin_basename( $this->plugin_file );
+            $current_version = isset( $transient->checked[ $slug ] ) ? $transient->checked[ $slug ] : null;
+            if ( ! $current_version ) return $transient;
+
+            if ( version_compare( $current_version, $release->normalized_version, '<' ) ) {
+                $obj              = new stdClass();
+                $obj->slug        = $slug;
+                $obj->plugin      = $slug;
+                $obj->new_version = $release->normalized_version;
+                $obj->url         = "https://github.com/{$this->github_user}/{$this->github_repo}";
+                $obj->package     = isset( $release->zipball_url ) ? $release->zipball_url : "https://github.com/{$this->github_user}/{$this->github_repo}/archive/refs/tags/{$release->tag_name}.zip";
+                $transient->response[ $slug ] = $obj;
+            }
+
+            return $transient;
+        }
+
+        public function plugin_info( $res, $action, $args ) {
+            if ( $action !== 'plugin_information' ) return $res;
+            if ( empty( $args->slug ) || $args->slug !== plugin_basename( $this->plugin_file ) ) return $res;
+
+            $release = $this->get_latest_release();
+            if ( ! $release ) return $res;
+
+            return (object) [
+                'name'          => 'YoCo - Takeaway System',
+                'slug'          => plugin_basename( $this->plugin_file ),
+                'version'       => $release->normalized_version,
+                'author'        => '<a href="https://www.yourcoding.nl">Your Coding - Sebastiaan Kalkman</a>',
+                'homepage'      => "https://github.com/{$this->github_user}/{$this->github_repo}",
+                'download_link' => isset( $release->zipball_url ) ? $release->zipball_url : "https://github.com/{$this->github_user}/{$this->github_repo}/archive/refs/tags/{$release->tag_name}.zip",
+                'sections'      => [
+                    'description' => ! empty( $release->body ) ? wp_kses_post( nl2br( $release->body ) ) : 'Complete takeaway ordering system with WooCommerce integration. Updates via GitHub Releases.',
+                    'changelog'   => ! empty( $release->body ) ? wp_kses_post( nl2br( $release->body ) ) : '',
+                ],
+            ];
+        }
+    }
+}
+
+// Instantieren (alleen in admin heeft effect, maar onschuldig overal)
+if ( class_exists( 'YoCo_GitHub_Updater' ) ) {
+    new YoCo_GitHub_Updater( YOCO_PLUGIN_FILE );
+}
