@@ -51,12 +51,13 @@ class YoCo_Frontend {
         add_action('wp_ajax_yoco_add_to_cart', array($this, 'add_to_cart_ajax'));
         add_action('wp_ajax_nopriv_yoco_add_to_cart', array($this, 'add_to_cart_ajax'));
         
-        // WooCommerce cart hooks
+        // Custom cart hooks for YoCo products
         add_filter('woocommerce_add_cart_item_data', array($this, 'add_cart_item_data'), 10, 3);
         add_filter('woocommerce_get_item_data', array($this, 'display_cart_item_data'), 10, 2);
         add_action('woocommerce_checkout_create_order_line_item', array($this, 'save_order_item_data'), 10, 4);
         add_filter('woocommerce_cart_item_name', array($this, 'cart_item_name'), 10, 3);
         add_filter('woocommerce_cart_item_price', array($this, 'cart_item_price'), 10, 3);
+        add_action('woocommerce_before_calculate_totals', array($this, 'calculate_cart_totals'));
     }
     
     /**
@@ -299,7 +300,7 @@ class YoCo_Frontend {
     }
     
     /**
-     * AJAX handler for adding to cart
+     * AJAX handler for adding to cart (custom virtual products)
      */
     public function add_to_cart_ajax() {
         check_ajax_referer('yoco_add_to_cart', 'nonce');
@@ -323,34 +324,42 @@ class YoCo_Frontend {
             return;
         }
         
-        $price = get_post_meta($food_id, '_yoco_food_price', true);
-        if (!$price) {
-            wp_send_json_error(__('Prijs niet gevonden', 'yoco-takeaway'));
+        $food_meta = YoCo_Core::get_food_meta($food_id);
+        $price = floatval($food_meta['price']);
+        
+        if (!$price || $price <= 0) {
+            wp_send_json_error(__('Product heeft geen geldige prijs', 'yoco-takeaway'));
             return;
         }
         
+        // Create virtual WooCommerce product data for this session
+        $virtual_product_id = $this->create_virtual_product($food_id, $food_post, $food_meta);
+        
+        if (!$virtual_product_id) {
+            wp_send_json_error(__('Kon virtueel product niet aanmaken', 'yoco-takeaway'));
+            return;
+        }
+        
+        // Custom cart item data with all food info
         $cart_item_data = array(
             'yoco_food_product' => true,
             'yoco_food_id' => $food_id,
             'yoco_food_title' => $food_post->post_title,
             'yoco_food_price' => $price,
-            'yoco_food_thumbnail' => get_the_post_thumbnail_url($food_id, 'thumbnail'),
-            'unique_key' => md5($food_id . time())
+            'yoco_food_image' => get_the_post_thumbnail_url($food_id, 'thumbnail'),
+            'yoco_food_description' => $food_post->post_excerpt,
+            'yoco_is_virtual' => true,
+            'unique_key' => md5($food_id . time() . wp_rand())
         );
         
-        $placeholder_product_id = get_option('yoco_wc_placeholder_product');
-        
-        if (!$placeholder_product_id || !get_post($placeholder_product_id)) {
-            wp_send_json_error(__('Placeholder product niet gevonden', 'yoco-takeaway'));
-            return;
-        }
-        
-        $cart_item_key = WC()->cart->add_to_cart($placeholder_product_id, $quantity, 0, array(), $cart_item_data);
+        // Add to cart using virtual product
+        $cart_item_key = WC()->cart->add_to_cart($virtual_product_id, $quantity, 0, array(), $cart_item_data);
         
         if ($cart_item_key) {
             wp_send_json_success(array(
                 'message' => __('Product toegevoegd aan winkelwagen', 'yoco-takeaway'),
-                'cart_count' => WC()->cart->get_cart_contents_count()
+                'cart_count' => WC()->cart->get_cart_contents_count(),
+                'cart_total' => WC()->cart->get_cart_total()
             ));
         } else {
             wp_send_json_error(__('Kon product niet toevoegen aan winkelwagen', 'yoco-takeaway'));
@@ -358,19 +367,55 @@ class YoCo_Frontend {
     }
     
     /**
-     * Add cart item data
+     * Create virtual WooCommerce product for cart session
+     * 
+     * @param int $food_id
+     * @param WP_Post $food_post
+     * @param array $food_meta
+     * @return int Virtual product ID
+     */
+    private function create_virtual_product($food_id, $food_post, $food_meta) {
+        // Check if we have a virtual product already
+        $virtual_product_id = get_option('yoco_virtual_product_id');
+        
+        if (!$virtual_product_id || !get_post($virtual_product_id)) {
+            // Create a single virtual product for all YoCo items
+            $virtual_product_id = wp_insert_post(array(
+                'post_title' => __('YoCo Virtual Product', 'yoco-takeaway'),
+                'post_content' => __('Virtual product for YoCo Takeaway System', 'yoco-takeaway'),
+                'post_status' => 'private', // Private so it's hidden
+                'post_type' => 'product',
+                'meta_input' => array(
+                    '_virtual' => 'yes',
+                    '_price' => '0', // Price will be set dynamically
+                    '_regular_price' => '0',
+                    '_manage_stock' => 'no',
+                    '_stock_status' => 'instock',
+                    '_visibility' => 'hidden',
+                    '_yoco_virtual_product' => true,
+                )
+            ));
+            
+            if ($virtual_product_id && !is_wp_error($virtual_product_id)) {
+                update_option('yoco_virtual_product_id', $virtual_product_id);
+            } else {
+                return false;
+            }
+        }
+        
+        return $virtual_product_id;
+    }
+    
+    /**
+     * Add cart item data for YoCo products
      */
     public function add_cart_item_data($cart_item_data, $product_id, $variation_id) {
-        if (isset($cart_item_data['yoco_food_product'])) {
-            $cart_item_data['data'] = clone WC()->product_factory->get_product($product_id);
-            $cart_item_data['data']->set_name($cart_item_data['yoco_food_title']);
-            $cart_item_data['data']->set_price($cart_item_data['yoco_food_price']);
-        }
+        // For YoCo products, the data is already set in AJAX handler
         return $cart_item_data;
     }
     
     /**
-     * Display cart item data
+     * Display custom cart item data
      */
     public function display_cart_item_data($item_data, $cart_item) {
         if (isset($cart_item['yoco_food_product'])) {
@@ -378,38 +423,73 @@ class YoCo_Frontend {
                 'name' => __('YoCo Product', 'yoco-takeaway'),
                 'value' => $cart_item['yoco_food_title']
             );
+            
+            // Add food ID for reference
+            $item_data[] = array(
+                'name' => __('Product ID', 'yoco-takeaway'),
+                'value' => '#' . $cart_item['yoco_food_id']
+            );
         }
         return $item_data;
     }
     
     /**
-     * Save order item data
+     * Save order item data for YoCo products
      */
     public function save_order_item_data($item, $cart_item_key, $values, $order) {
         if (isset($values['yoco_food_product'])) {
             $item->add_meta_data(__('YoCo Product ID', 'yoco-takeaway'), $values['yoco_food_id']);
             $item->add_meta_data(__('YoCo Product Title', 'yoco-takeaway'), $values['yoco_food_title']);
+            $item->add_meta_data(__('Original Price', 'yoco-takeaway'), wc_price($values['yoco_food_price']));
+            
+            if (!empty($values['yoco_food_description'])) {
+                $item->add_meta_data(__('Description', 'yoco-takeaway'), $values['yoco_food_description']);
+            }
         }
     }
     
     /**
-     * Cart item name
+     * Override cart item name for YoCo products
      */
     public function cart_item_name($name, $cart_item, $cart_item_key) {
         if (isset($cart_item['yoco_food_product'])) {
-            return $cart_item['yoco_food_title'];
+            $food_title = $cart_item['yoco_food_title'];
+            
+            // Add image if available
+            if (!empty($cart_item['yoco_food_image'])) {
+                $image = '<img src="' . esc_url($cart_item['yoco_food_image']) . '" alt="' . esc_attr($food_title) . '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 10px; vertical-align: middle;">';
+                return $image . esc_html($food_title);
+            }
+            
+            return esc_html($food_title);
         }
         return $name;
     }
     
     /**
-     * Cart item price
+     * Override cart item price for YoCo products
      */
     public function cart_item_price($price, $cart_item, $cart_item_key) {
         if (isset($cart_item['yoco_food_product'])) {
             return wc_price($cart_item['yoco_food_price']);
         }
         return $price;
+    }
+    
+    /**
+     * Calculate cart totals for YoCo products
+     */
+    public function calculate_cart_totals($cart) {
+        if (is_admin() && !defined('DOING_AJAX')) {
+            return;
+        }
+        
+        foreach ($cart->get_cart() as $cart_item) {
+            if (isset($cart_item['yoco_food_product'])) {
+                // Set the custom price
+                $cart_item['data']->set_price($cart_item['yoco_food_price']);
+            }
+        }
     }
     
     /**

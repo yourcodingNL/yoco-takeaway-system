@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('YOCO_VERSION', '1.0.0');
+define('YOCO_VERSION', '1.0.1');
 define('YOCO_PLUGIN_FILE', __FILE__);
 define('YOCO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('YOCO_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -149,8 +149,11 @@ final class YoCo_Takeaway_System {
             return;
         }
         
-        // Create placeholder product for WooCommerce integration
-        $this->create_placeholder_product();
+        // Create virtual product for cart system
+        $this->create_virtual_product();
+        
+        // Clean up any old WooCommerce sync data
+        $this->cleanup_old_sync_data();
         
         // Flush rewrite rules
         flush_rewrite_rules();
@@ -159,7 +162,7 @@ final class YoCo_Takeaway_System {
         $this->set_default_options();
         
         // Log activation
-        error_log('YoCo Takeaway System activated');
+        error_log('YoCo Takeaway System activated with virtual cart system');
     }
     
     /**
@@ -195,30 +198,78 @@ final class YoCo_Takeaway_System {
     }
     
     /**
-     * Create placeholder product for WooCommerce
+     * Create virtual product for cart system
      */
-    private function create_placeholder_product() {
+    private function create_virtual_product() {
         if (!class_exists('WooCommerce')) {
             return;
         }
         
-        $placeholder_id = get_option('yoco_wc_placeholder_product');
+        $virtual_product_id = get_option('yoco_virtual_product_id');
         
-        if (!$placeholder_id || !get_post($placeholder_id)) {
-            $placeholder_id = wp_insert_post(array(
-                'post_title' => __('YoCo Food Product Placeholder', 'yoco-takeaway'),
-                'post_type' => 'product',
+        if (!$virtual_product_id || !get_post($virtual_product_id)) {
+            $virtual_product_id = wp_insert_post(array(
+                'post_title' => __('YoCo Virtual Product', 'yoco-takeaway'),
+                'post_content' => __('Virtual product for YoCo Takeaway System. Do not delete.', 'yoco-takeaway'),
                 'post_status' => 'private',
-                'post_content' => __('This is a placeholder product for YoCo Takeaway System. Do not delete.', 'yoco-takeaway')
+                'post_type' => 'product',
+                'meta_input' => array(
+                    '_virtual' => 'yes',
+                    '_price' => '0',
+                    '_regular_price' => '0',
+                    '_manage_stock' => 'no',
+                    '_stock_status' => 'instock',
+                    '_visibility' => 'hidden',
+                    '_yoco_virtual_product' => true,
+                )
             ));
             
-            if ($placeholder_id) {
-                update_post_meta($placeholder_id, '_virtual', 'yes');
-                update_post_meta($placeholder_id, '_price', '0');
-                update_post_meta($placeholder_id, '_regular_price', '0');
-                update_post_meta($placeholder_id, '_manage_stock', 'no');
-                update_option('yoco_wc_placeholder_product', $placeholder_id);
+            if ($virtual_product_id && !is_wp_error($virtual_product_id)) {
+                update_option('yoco_virtual_product_id', $virtual_product_id);
+                error_log('YoCo: Created virtual product #' . $virtual_product_id);
             }
+        }
+    }
+    
+    /**
+     * Clean up old WooCommerce sync data
+     */
+    private function cleanup_old_sync_data() {
+        global $wpdb;
+        
+        // Remove old sync meta data from food products
+        $wpdb->delete(
+            $wpdb->postmeta,
+            array('meta_key' => '_yoco_wc_product_id'),
+            array('%s')
+        );
+        
+        // Remove old placeholder products
+        $old_placeholder_id = get_option('yoco_wc_placeholder_product');
+        if ($old_placeholder_id && get_post($old_placeholder_id)) {
+            wp_delete_post($old_placeholder_id, true);
+            delete_option('yoco_wc_placeholder_product');
+        }
+        
+        // Remove old migration flags
+        delete_option('yoco_migration_completed');
+        delete_option('yoco_migration_notice');
+        
+        // Clean up any orphaned WooCommerce products with _yoco_food_product meta
+        $orphaned_products = get_posts(array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_yoco_food_product',
+            'meta_compare' => 'EXISTS'
+        ));
+        
+        foreach ($orphaned_products as $product_id) {
+            wp_delete_post($product_id, true);
+        }
+        
+        if (!empty($orphaned_products)) {
+            error_log('YoCo: Cleaned up ' . count($orphaned_products) . ' orphaned WooCommerce products');
         }
     }
     
@@ -239,6 +290,21 @@ final class YoCo_Takeaway_System {
         // Default button text
         if (!get_option('yoco_order_button_text')) {
             update_option('yoco_order_button_text', __('Bestellen', 'yoco-takeaway'));
+        }
+    }
+    
+    /**
+     * Show activation notice
+     */
+    public function show_activation_notice() {
+        $notice = get_option('yoco_activation_notice');
+        if ($notice) {
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <p><?php echo esc_html($notice); ?></p>
+            </div>
+            <?php
+            delete_option('yoco_activation_notice');
         }
     }
     
@@ -310,6 +376,7 @@ function YoCo() {
 
 // Initialize plugin
 YoCo();
+
 /**
  * --- GitHub Updater: YoCo Takeaway System ---
  * Werkt met PUBLIC repo releases (tags als v1.0.1)
