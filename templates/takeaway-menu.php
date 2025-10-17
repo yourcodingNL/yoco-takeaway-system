@@ -376,7 +376,7 @@ $spicy_labels = YoCo_Core::get_spicy_labels();
                             <span class="yoco-order-text"><?php echo esc_html($button_text); ?></span>
                             <span class="yoco-order-loading" style="display: none;">
                                 <span class="yoco-spinner"></span>
-                                <?php _e('Laden...', 'yoco-takeaway'); ?>
+                                <?php _e('', 'yoco-takeaway'); ?>
                             </span>
                         </button>
                         
@@ -436,7 +436,7 @@ window.yocoConfig = {
     buttonText: <?php echo json_encode($button_text, JSON_UNESCAPED_UNICODE); ?>,
     i18n: {
         noResults: <?php echo json_encode(__('Geen resultaten gevonden', 'yoco-takeaway'), JSON_UNESCAPED_UNICODE); ?>,
-        loading: <?php echo json_encode(__('Laden...', 'yoco-takeaway'), JSON_UNESCAPED_UNICODE); ?>,
+        loading: <?php echo json_encode(__('', 'yoco-takeaway'), JSON_UNESCAPED_UNICODE); ?>,
         error: <?php echo json_encode(__('Er is een fout opgetreden', 'yoco-takeaway'), JSON_UNESCAPED_UNICODE); ?>,
         addedToCart: <?php echo json_encode(__('Toegevoegd aan winkelwagen', 'yoco-takeaway'), JSON_UNESCAPED_UNICODE); ?>
     }
