@@ -72,6 +72,11 @@ class YoCo_Admin {
         // Quick edit support for category order
         add_action('quick_edit_custom_box', array($this, 'add_quick_edit_fields'), 10, 3);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_quick_edit_script'));
+        
+        // WooCommerce sync hooks
+        add_action('save_post_yoco_food', array($this, 'trigger_woocommerce_sync'), 20); // After meta save
+        add_action('before_delete_post', array($this, 'cleanup_woocommerce_product'));
+        add_action('wp_trash_post', array($this, 'cleanup_woocommerce_product'));
     }
 
     /**
@@ -243,6 +248,45 @@ class YoCo_Admin {
     }
 
     /**
+     * Trigger WooCommerce sync after food product save
+     * 
+     * @param int $post_id
+     */
+    public function trigger_woocommerce_sync($post_id) {
+        // Skip for autosave or revisions
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        
+        if (wp_is_post_revision($post_id)) {
+            return;
+        }
+        
+        // Check if sync class exists
+        if (class_exists('YoCo_WooCommerce_Sync')) {
+            YoCo_WooCommerce_Sync::get_instance()->sync_food_to_woocommerce($post_id);
+        }
+    }
+    
+    /**
+     * Cleanup WooCommerce product when food product is deleted
+     * 
+     * @param int $post_id
+     */
+    public function cleanup_woocommerce_product($post_id) {
+        $post = get_post($post_id);
+        
+        if (!$post || $post->post_type !== 'yoco_food') {
+            return;
+        }
+        
+        // Check if sync class exists
+        if (class_exists('YoCo_WooCommerce_Sync')) {
+            YoCo_WooCommerce_Sync::get_instance()->delete_woocommerce_product($post_id);
+        }
+    }
+
+    /**
      * Add order field to new category form (taxonomy: yoco_food_cat)
      */
     public function add_category_order_field() {
@@ -411,6 +455,7 @@ class YoCo_Admin {
 
             update_option('yoco_icons', $icons);
             update_option('yoco_order_button_text', isset($_POST['order_button_text']) ? sanitize_text_field($_POST['order_button_text']) : __('Bestellen', 'yoco-takeaway'));
+            update_option('yoco_default_image', isset($_POST['default_image']) ? esc_url_raw($_POST['default_image']) : '');
 
             echo '<div class="notice notice-success"><p>' . esc_html__('Instellingen opgeslagen!', 'yoco-takeaway') . '</p></div>';
         }
@@ -423,6 +468,7 @@ class YoCo_Admin {
         ));
 
         $order_button_text = get_option('yoco_order_button_text', __('Bestellen', 'yoco-takeaway'));
+        $default_image = get_option('yoco_default_image', '');
         ?>
         <div class="wrap">
             <h1><?php _e('YoCo Takeaway System Instellingen', 'yoco-takeaway'); ?></h1>
@@ -476,6 +522,21 @@ class YoCo_Admin {
                             <?php if (!empty($icons['spicy'])): ?>
                                 <br><img src="<?php echo esc_url($icons['spicy']); ?>" style="max-width: 50px; margin-top: 10px;" alt="Spicy icon">
                             <?php endif; ?>
+                        </td>
+                    </tr>
+                </table>
+
+                <h2><?php _e('Standaard Afbeelding', 'yoco-takeaway'); ?></h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Standaard Product Afbeelding', 'yoco-takeaway'); ?></th>
+                        <td>
+                            <input type="text" name="default_image" id="default_image" value="<?php echo esc_attr($default_image); ?>" class="regular-text">
+                            <button type="button" class="button yoco-upload-icon-button" data-target="default_image"><?php _e('Upload Afbeelding', 'yoco-takeaway'); ?></button>
+                            <?php if (!empty($default_image)): ?>
+                                <br><img src="<?php echo esc_url($default_image); ?>" style="max-width: 100px; margin-top: 10px;" alt="Default image">
+                            <?php endif; ?>
+                            <p class="description"><?php _e('Deze afbeelding wordt gebruikt voor producten zonder eigen afbeelding.', 'yoco-takeaway'); ?></p>
                         </td>
                     </tr>
                 </table>

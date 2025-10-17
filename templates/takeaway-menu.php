@@ -195,6 +195,15 @@ $spicy_labels = YoCo_Core::get_spicy_labels();
                     $post_id = get_the_ID();
                     $meta = YoCo_Core::get_food_meta($post_id);
                     $thumbnail = get_the_post_thumbnail_url($post_id, 'medium');
+                    
+                    // Use default image if no thumbnail
+                    if (!$thumbnail) {
+                        $default_image = get_option('yoco_default_image', '');
+                        if ($default_image) {
+                            $thumbnail = $default_image;
+                        }
+                    }
+                    
                     $thumbnail_alt = get_the_post_thumbnail_caption($post_id) ?: get_the_title();
                     
                     $item_categories = wp_get_post_terms($post_id, 'yoco_food_cat', array('fields' => 'slugs'));

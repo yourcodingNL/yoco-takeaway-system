@@ -212,6 +212,108 @@ class YoCo_Core {
     }
     
     /**
+     * Ensure virtual product exists and is valid
+     * 
+     * @return int Virtual product ID
+     */
+    public static function ensure_virtual_product() {
+        $virtual_product_id = get_option('yoco_virtual_product_id');
+        
+        // Check if product exists and is valid
+        if ($virtual_product_id && get_post($virtual_product_id)) {
+            $product = get_post($virtual_product_id);
+            // Verify it's still a product and has our meta
+            if ($product->post_type === 'product' && get_post_meta($virtual_product_id, '_yoco_virtual_master', true)) {
+                return $virtual_product_id;
+            }
+        }
+        
+        // Create or recreate virtual product
+        return self::create_virtual_product();
+    }
+    
+    /**
+     * Create virtual product with safety features
+     * 
+     * @return int|false Virtual product ID or false on failure
+     */
+    private static function create_virtual_product() {
+        if (!class_exists('WooCommerce')) {
+            return false;
+        }
+        
+        // Try to use a high ID for safety
+        $desired_id = 999999;
+        
+        // Create virtual product
+        $virtual_product_data = array(
+            'post_title' => __('YoCo Virtual Product', 'yoco-takeaway'),
+            'post_content' => __('Virtual product for YoCo Takeaway System. Do not delete.', 'yoco-takeaway'),
+            'post_status' => 'publish',
+            'post_type' => 'product',
+            'post_name' => 'yoco-virtual-container-v1', // Unique slug
+            'meta_input' => array(
+                '_virtual' => 'yes',
+                '_price' => '0',
+                '_regular_price' => '0',
+                '_manage_stock' => 'no',
+                '_stock_status' => 'instock',
+                '_visibility' => 'hidden',
+                '_catalog_visibility' => 'hidden',
+                '_yoco_virtual_master' => true,
+                '_yoco_created_time' => time(),
+            )
+        );
+        
+        // Try with desired ID first
+        if (!get_post($desired_id)) {
+            global $wpdb;
+            $wpdb->query($wpdb->prepare(
+                "INSERT INTO {$wpdb->posts} (ID, post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt, post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order, post_type, post_mime_type, comment_count) VALUES (%d, %d, %s, %s, %s, %s, '', %s, 'closed', 'closed', '', %s, '', '', %s, %s, '', 0, '', 0, %s, '', 0)",
+                $desired_id,
+                1, // Admin user
+                current_time('mysql'),
+                current_time('mysql', 1),
+                $virtual_product_data['post_content'],
+                $virtual_product_data['post_title'],
+                $virtual_product_data['post_status'],
+                $virtual_product_data['post_name'],
+                current_time('mysql'),
+                current_time('mysql', 1),
+                $virtual_product_data['post_type']
+            ));
+            
+            if ($wpdb->insert_id || get_post($desired_id)) {
+                $virtual_product_id = $desired_id;
+            } else {
+                // Fallback to normal insertion
+                $virtual_product_id = wp_insert_post($virtual_product_data);
+            }
+        } else {
+            // Fallback to normal insertion
+            $virtual_product_id = wp_insert_post($virtual_product_data);
+        }
+        
+        if ($virtual_product_id && !is_wp_error($virtual_product_id)) {
+            // Add meta data
+            foreach ($virtual_product_data['meta_input'] as $key => $value) {
+                update_post_meta($virtual_product_id, $key, $value);
+            }
+            
+            // Set WooCommerce product type
+            wp_set_object_terms($virtual_product_id, 'simple', 'product_type');
+            
+            update_option('yoco_virtual_product_id', $virtual_product_id);
+            
+            error_log('YoCo: Created virtual product #' . $virtual_product_id);
+            return $virtual_product_id;
+        }
+        
+        error_log('YoCo: Failed to create virtual product');
+        return false;
+    }
+    
+    /**
      * Get all allergen labels
      * 
      * @return array

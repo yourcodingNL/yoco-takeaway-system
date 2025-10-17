@@ -3,7 +3,7 @@
  * Plugin Name: YoCo - Takeaway System
  * Plugin URI: https://github.com/yourcodingNL/yoco-takeaway-system
  * Description: Complete takeaway ordering system with food products, menu display, and WooCommerce integration.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Your Coding - Sebastiaan Kalkman
  * Author URI: https://www.yourcoding.nl
  * Email: info@yourcoding.nl
@@ -95,6 +95,7 @@ final class YoCo_Takeaway_System {
         require_once YOCO_PLUGIN_DIR . 'includes/class-yoco-core.php';
         require_once YOCO_PLUGIN_DIR . 'includes/class-yoco-admin.php';
         require_once YOCO_PLUGIN_DIR . 'includes/class-yoco-frontend.php';
+        require_once YOCO_PLUGIN_DIR . 'includes/class-yoco-woocommerce-sync.php';
     }
     
     /**

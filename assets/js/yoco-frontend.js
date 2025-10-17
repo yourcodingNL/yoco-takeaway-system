@@ -303,10 +303,16 @@
          * Add item to cart via AJAX
          */
         addToCart: function(foodId, quantity, foodTitle, button) {
-            this.state.isLoading = true;
-            
-            const originalText = button.text();
-            button.prop('disabled', true).text(yoco_ajax.i18n.adding);
+    this.state.isLoading = true;
+    
+    // Store original text if not already stored
+    if (!button.data('original-text')) {
+        button.data('original-text', button.find('.yoco-order-text').text());
+    }
+    const originalText = button.data('original-text');
+button.prop('disabled', true);
+button.find('.yoco-order-text').hide();
+button.find('.yoco-order-loading').show();
 
             $.ajax({
                 url: yoco_ajax.ajax_url,
@@ -355,7 +361,9 @@
                 },
                 complete: function() {
                     YoCoFrontend.state.isLoading = false;
-                    button.prop('disabled', false).text(originalText);
+                    button.prop('disabled', false);
+button.find('.yoco-order-text').show().text(originalText);
+button.find('.yoco-order-loading').hide();
                 }
             });
         },
